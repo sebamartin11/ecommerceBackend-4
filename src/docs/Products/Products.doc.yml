@@ -1,0 +1,268 @@
+paths:
+  /api/products:
+    get:
+      tags:
+        - Products
+      summary: Get all products
+      description: |
+        Returns a list of all available products in the DB.
+        The list can be filtered by various parameters such as category, price range, and availability.
+
+        ### Query Parameters
+        - 'category' (optional): Filter products by category. 
+          Example: `/api/products?category=electronics`
+
+        - 'sort' (optional): Sort products by price or name.
+          Example: `/api/products?sort=price`
+
+        - 'limit' (optional): The maximum number of products to return per page. Default value is 10.
+          Example: `/api/products?limit=5`
+
+        - 'page' (optional): The page number to return. Default value is 1.
+          Example: `/api/products?page=1`
+
+      parameters:
+        - name: category
+          in: query
+          required: false
+          description: Filter products by category.
+        - name: sort
+          in: query
+          required: false
+          description: Sort products by price or name.
+        - name: limit
+          in: query
+          required: false
+          description: The maximum number of products to return per page. Default value is 10.
+        - name: page
+          in: query
+          required: false
+          description: The page number to return. Default value is 1.
+      responses:
+        "200":
+          description: Products fetched successfully from the DB
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/ProductsResponse"
+        "401":
+          description: Unauthorized. Token expired
+        "500":
+          description: Internal Server Error
+
+    post:
+      tags:
+        - Products
+      summary: Create new product
+      responses:
+        "201":
+          description: Product created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/ProductResponse"
+        "400":
+          description: Bad request. Missing required params to create a new product or product already exists in the DB
+        "401":
+          description: Unauthorized. Token expired
+        "403":
+          description: Forbidden. Invalid credentials
+        "500":
+          description: Internal Server Error
+
+  /api/products/{productId}:
+    get:
+      tags:
+        - Products
+      summary: Get a single product by ID
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          description: Product ID to fetch
+      responses:
+        "200":
+          description: Product with the given productId
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/ProductResponse"
+        "400":
+          description: Bad request. Missing product id
+        "401":
+          description: Unauthorized. Token expired
+        "404":
+          description: Not found. Product with the given productId not found
+        "500":
+          description: Internal Server Error
+
+    put:
+      tags:
+        - Products
+      summary: Update single product properties by given ID
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          description: Product ID to fetch
+        - name: body
+          in: body
+          required: true
+          description: Products fields that can be updated
+          schema:
+            $ref: "#components/requestBodies/UpdateProductPayload"
+      responses:
+        "200":
+          description: Updated product with the given productId
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/ProductResponse"
+        "400":
+          description: Bad request. Missing product Id or Invalid body format - missing data of the product
+        "401":
+          description: Unauthorized. Token expired
+        "403":
+          description: Forbidden. Invalid credentials
+        "404":
+          description: Not found. Product with the given productId not found
+        "500":
+          description: Internal Server Error
+
+    delete:
+      tags:
+        - Products
+      summary: Delete single product by ID
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          description: Product ID to fetch
+      responses:
+        "200":
+          description: Product with the product id given successfully deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/ProductResponse"
+        "400":
+          description: Bad request. Missing product Id or Invalid body format - missing data of the product
+        "401":
+          description: Unauthorized. Token expired
+        "403":
+          description: Forbidden. Invalid credentials
+        "404":
+          description: Not found. Product with the given productId not found
+        "500":
+          description: Internal Server Error
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: Autogenerated MongoDB Id
+        title:
+          type: string
+          description: Product's name. Required
+        description:
+          type: string
+          description: Product's description. Required
+        code:
+          type: string
+          description: Product's code (unique field). Required
+        price:
+          type: number
+          description: Product's price. Required
+        thumbnail:
+          type: string
+          description: Product's thumbnail. Required
+        stock:
+          type: number
+          description: Product's stock. Required
+        category:
+          type: string
+          description: Product's category. Required
+        status:
+          type: boolean
+          description: Product's status. Default value 'true'
+        owner:
+          type: string
+          description: Product's owner. Default value 'admin'
+      example:
+        _id: ObjectId(123abc456efg)
+        title: Pencil
+        description: Black Pencil
+        code: 789abc
+        price: 2
+        thumbnail: http://placekitten.com/200/300
+        stock: 10
+        category: library
+        status: true
+        owner: admin
+
+    ProductsResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [success, error]
+          description: Product response status
+        payload:
+          type: array
+          description: Products array list
+          items:
+            $ref: "#components/schemas/Product"
+
+    ProductResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [success, error]
+          description: Product response status
+        payload:
+          $ref: "#components/schemas/Product"
+
+  requestBodies:
+    UpdateProductPayload:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Product's name. Required
+        description:
+          type: string
+          description: Product's description. Required
+        code:
+          type: string
+          description: Product's code (unique field). Required
+        price:
+          type: number
+          description: Product's price. Required
+        thumbnail:
+          type: string
+          description: Product's thumbnail. Required
+        stock:
+          type: number
+          description: Product's stock. Required
+        category:
+          type: string
+          description: Product's category. Required
+        status:
+          type: boolean
+          description: Product's status. Default value 'true'
+        owner:
+          type: string
+          description: Product's owner. Default value 'admin'
+      example:
+        title: Pencil
+        description: Black Pencil
+        code: 789abc
+        price: 2
+        thumbnail: http://placekitten.com/200/300
+        stock: 10
+        category: library
+        status: true
+        owner: admin

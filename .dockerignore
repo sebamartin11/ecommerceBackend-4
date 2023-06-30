@@ -1,0 +1,15 @@
+# dependencies
+/node_modules
+.env
+.env.*
+!.env.example
+
+# logs
+error.log
+
+# kubernetes
+*.yml
+!kubernetes.example.yml
+
+# swagger documentation
+!*.doc.yml

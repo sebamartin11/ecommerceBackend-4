@@ -1,0 +1,306 @@
+paths:
+  /api/users:
+    get:
+      tags:
+        - Users
+      summary: Get all users
+      responses:
+        "200":
+          description: Users fetched successfully from the DB
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UsersResponse"
+        "401":
+          description: Unauthorized. Token expired
+        "403":
+          description: Forbidden. Invalid credentials
+        "500":
+          description: Internal Server Error
+
+    post:
+      tags:
+        - Users
+      summary: Create new user and set a cookie session
+      responses:
+        "201":
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UsersResponse"
+        "400":
+          description: Bad request. Missing required params to create a new user or User already exists in the DB
+        "401":
+          description: Unauthorized. Token expired
+        "500":
+          description: Internal Server Error
+
+  /api/users/{userId}:
+    get:
+      tags:
+        - Users
+      summary: Get a single user by ID
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: User ID to fetch
+          schema:
+            $type: string
+      responses:
+        "200":
+          description: User with the given userId
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UserResponse"
+        "400":
+          description: Bad request. Missing user id
+        "401":
+          description: Unauthorized. Token expired
+        "404":
+          description: Not found. User with the given userId not found
+        "500":
+          description: Internal Server Error
+
+    put:
+      tags:
+        - Users
+      summary: Update single user properties by given ID
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: User ID to fetch
+          schema:
+            $type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#components/requestBodies/UpdateUserPayload"
+      responses:
+        "200":
+          description: Updated user with the given userId
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UserResponse"
+        "400":
+          description: Bad request. Invalid body format or missing data from user
+        "401":
+          description: Unauthorized. Token expired
+        "403":
+          description: Forbidden. Invalid credentials
+        "404":
+          description: Not found. User with the given userId not found
+        "500":
+          description: Internal Server Error
+
+    delete:
+      tags:
+        - Users
+      summary: Delete single user by ID
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: User ID to fetch
+          schema:
+            $type: string
+      responses:
+        "200":
+          description: User with the user id given successfully deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UsersResponse"
+        "401":
+          description: Unauthorized. Token expired
+        "403":
+          description: Forbidden. Invalid credentials
+        "500":
+          description: Internal Server Error
+
+  /api/users/premium/{userId}:
+    put:
+      tags:
+        - Users
+      summary: Update single user role from 'user' to 'premium' and viceversa
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: User ID to fetch
+          schema:
+            $type: string
+      responses:
+        "200":
+          description: Role of the user with the user id given successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UsersResponse"
+        "400":
+          description: Bad request. Invalid or missing user id
+        "401":
+          description: Unauthorized. Token expired
+        "403":
+          description: Forbidden. Invalid credentials
+        "404":
+          description: Not found User with the given userId not found
+        "500":
+          description: Internal Server Error
+
+  /api/users/resetPassword:
+    post:
+      tags:
+        - Users
+      summary: Request link to create new password
+      responses:
+        "200":
+          description: Email with restore password email sent successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UserEmailResponse"
+        "404":
+          description: Not found. User with the given email not found
+        "500":
+          description: Internal Server Error
+
+  /api/users/createPassword:
+    put:
+      tags:
+        - Users
+      summary: Create new password from existing user
+      responses:
+        "200":
+          description: New password created
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UsersResponse"
+        "400":
+          description: Bad request. Invalid token or password
+        "401":
+          description: Unauthorized. Token expired
+        "404":
+          description: Not found. User with the given email not found
+        "498":
+          description: Invalid Token
+        "500":
+          description: Internal Server Error
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: Autogenerated MongoDB Id
+        first_name:
+          type: string
+          description: User first name. Required
+        last_name:
+          type: string
+          description: User last name. Required
+        email:
+          type: string
+          description: User email (unique field). Required
+        age:
+          type: number
+          description: User age. Required
+        password:
+          type: string
+          description: User hashed password. Required
+        github_username:
+          type: string
+          description: User GitHub username (unique field). Not mandatory
+        role:
+          type: string
+          description: User role [user-admin-premium]
+        cart:
+          type: ObjectId
+          description: Cart autogenerated MongoDB Id reference
+      example:
+        _id: ObjectId(123abc456efg)
+        first_name: John
+        last_name: Dou
+        email: johnDou@gmail.com
+        age: 29
+        password: skldnvlkn$#bdf$%1245@^7*432
+        github_username: JohnDou
+        role: user
+        cart: ObjectId(789hij101112klm)
+
+    UsersResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [success, error]
+          description: User response status
+        payload:
+          type: array
+          description: Users array list
+          items:
+            $ref: "#components/schemas/User"
+
+    UserResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [success, error]
+          description: User response status
+        payload:
+          $ref: "#components/schemas/User"
+
+    UserEmailResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [success, error]
+          description: Email response status
+
+  requestBodies:
+    UpdateUserPayload:
+      type: object
+      properties:
+        first_name:
+          type: string
+          description: User first name. Required
+        last_name:
+          type: string
+          description: User last name. Required
+        email:
+          type: string
+          description: User email (unique field). Required
+        age:
+          type: number
+          description: User age. Required
+        password:
+          type: string
+          description: User password. Required
+        github_username:
+          type: string
+          description: User GitHub username (unique field). Not mandatory
+        role:
+          type: string
+          description: User role [user-admin-premium]
+        cart:
+          type: ObjectId
+          description: Cart autogenerated MongoDB Id reference
+      example:
+        first_name: John
+        last_name: Dou
+        email: johnDou@gmail.com
+        age: 29
+        password: 123abc456
+        github_username: JohnDou
+        role: user
+        cart: ObjectId(789hij101112klm)

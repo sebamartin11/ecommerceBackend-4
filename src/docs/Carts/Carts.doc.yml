@@ -1,0 +1,266 @@
+paths:
+  /api/carts:
+    get:
+      tags:
+        - Carts
+      summary: Get all carts
+      responses:
+        "200":
+          description: Carts fetched successfully from the DB
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/CartsResponse"
+        "401":
+          description: Unauthorized. Token expired
+        "403":
+          description: Forbidden. Invalid credentials
+        "500":
+          description: Internal Server Error
+
+    post:
+      tags:
+        - Carts
+      summary: Create new cart
+      responses:
+        "201":
+          description: Cart created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/CartResponse"
+        "400":
+          description: Bad request. Missing required params to create a new cart or cart already exists in the DB
+        "401":
+          description: Unauthorized. Token expired
+        "403":
+          description: Forbidden. Invalid credentials
+        "500":
+          description: Internal Server Error
+
+  /api/carts/{cartId}:
+    get:
+      tags:
+        - Carts
+      summary: Get a single cart by ID
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          description: Cart ID to fetch
+      responses:
+        "200":
+          description: Cart with the given cartId
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/CartResponse"
+        "400":
+          description: Bad request. Missing cart id
+        "401":
+          description: Unauthorized. Token expired
+        "404":
+          description: Cart with the given cartId not found
+        "500":
+          description: Internal Server Error
+
+    delete:
+      tags:
+        - Carts
+      summary: Delete single cart by ID
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          description: Cart ID to fetch
+      responses:
+        "200":
+          description: Cart with the cart id given successfully deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/CartResponse"
+        "400":
+          description: Missing cart Id or Invalid body format - missing data of the cart
+        "401":
+          description: Unauthorized. Token expired
+        "403":
+          description: Forbidden. Invalid credentials
+        "404":
+          description: Cart with the given cartId not found
+        "500":
+          description: Internal Server Error
+
+  /api/carts/products/{productId}:
+    put:
+      tags:
+        - Carts
+      summary: Update the quantity of a product in the cart with the given cartId and productId
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          description: product ID to fetch
+        - name: quantity
+          in: body
+          required: true
+          description: Product quantity to be updated
+          schema:
+            $ref: "#components/requestBodies/UpdateQuantityProductPayload"
+      responses:
+        "200":
+          description: Updated product quantity with the given cartId and productId
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/CartResponse"
+        "400":
+          description: Bad request. Missing params. A quantity or product ID of product must be provided
+        "401":
+          description: Unauthorized. Token expired
+        "403":
+          description: Forbidden. Invalid credentials
+        "404":
+          description: Not found. Cart with the given cartId not found
+        "500":
+          description: Internal Server Error
+
+    post:
+      tags:
+        - Carts
+      summary: Add a single product to cart's user
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          description: Product ID to fetch
+        - name: quantity
+          in: query
+          required: true
+          description: Product quantity to fetch
+      responses:
+        "200":
+          description: Product with given productId successfully added to user's cart
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/CartResponse"
+        "400":
+          description: Bad request. Missing cart id
+        "401":
+          description: Unauthorized. Token expired
+        "403":
+          description: Forbidden. Can not add own products
+        "404":
+          description: Not found. Product with the given productId not found
+        "500":
+          description: Internal Server Error
+
+    delete:
+      tags:
+        - Carts
+      summary: Delete a single product by product ID
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          description: Product ID to fetch
+      responses:
+        "200":
+          description: Product with the product id given successfully deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/CartResponse"
+        "400":
+          description: Bad request. Missing product ID
+        "401":
+          description: Unauthorized. Token expired
+        "404":
+          description: Cart with the given cartId not found
+        "500":
+          description: Internal Server Error
+
+  /api/carts/{cartId}/purchase:
+    post:
+      tags:
+        - Carts
+      summary: Create the purchase by given cart ID
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          description: Cart ID to fetch
+      responses:
+        "200":
+          description: Purchase has been created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/CartResponse"
+        "400":
+          description: Bad request. Missing products or not enough stock to make the purchase
+        "401":
+          description: Unauthorized. Token expired
+        "404":
+          description: Cart with the given cartId not found
+        "500":
+          description: Internal Server Error
+components:
+  schemas:
+    Cart:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: Autogenerated MongoDB Id
+        products:
+          type: array
+          description: The list of products in the cart with their quantity. Default value 'empty'
+          items:
+            type: object
+            properties:
+              product:
+                type: ObjectId
+                description: Autogenerated MongoDB product Id
+              amount:
+                type: number
+                description: Quantity of the product
+      example:
+        _id: ObjectId(123abc456efg)
+        products: 
+          - product: ObjectId(789def321abc)
+            amount: 2
+
+    CartsResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [success, error]
+          description: Cart response status
+        payload:
+          type: array
+          description: Cart array list
+          items:
+            $ref: "#components/schemas/Cart"
+
+    CartResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [success, error]
+          description: Cart response status
+        payload:
+          $ref: "#components/schemas/Cart"
+
+  requestBodies:
+    UpdateQuantityProductPayload:
+      type: object
+      properties:
+        quantity:
+          type: number
+          description: Product's quantity. Required
+      example:
+        quantity: 5

@@ -1,0 +1,7 @@
+tags:
+  - name: Users
+    description: Users REST API Routes
+  - name: Carts
+    description: Carts REST API Routes
+  - name: Products
+    description: Products REST API Routes

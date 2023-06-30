@@ -1,0 +1,18 @@
+<div>
+    <div class="card-body">
+        <h1>Your Order</h1>
+        <p>By: {{orderPurchased.purchaser}}</p>
+        {{#each orderPurchased.products}}
+        <div>
+            <p>{{product.title}}</p>
+            <p>{{quantity}}</p>
+            <p>${{product.price}}</p>
+        </div>
+        {{/each}}
+        <p>Total: ${{orderPurchased.amount}}</p>
+        <p>Date order: {{orderPurchased.date}}</p>
+        <p>Order code: {{orderPurchased.code}}</p>
+    </div>
+</div>
+
+<script src="/static/js/cart.js"></script>

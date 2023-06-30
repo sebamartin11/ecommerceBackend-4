@@ -1,0 +1,63 @@
+apiVersion: version number
+kind: Service
+metadata:
+  name: kubernetes service name
+spec:
+  selector:
+    app: kubernetes pod name
+  ports:
+    - port: XX
+      targetPort: XX
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubernetes deployment name
+spec:
+  replicas: XXX
+  selector:
+    matchLabels:
+      app: kubernetes pod name
+  template:
+    metadata:
+      labels:
+        app: kubernetes pod name
+    spec:
+      containers:
+        - name: kubernetes container name
+          image: image name
+          ports:
+            - containerPort: XXX
+          env:
+            - name: PORT
+              value: "XXX"
+            - name: SECRET_KEY
+              value: "XXX"
+            - name: SESSION_KEY
+              value: "XXX"
+            - name: MONGO_URI
+              value: "XXX"
+            - name: PERSISTENCE
+              value: "MONGO or FILES"
+            - name: CLIENT_ID
+              value: "XXX"
+            - name: CLIENT_SECRET
+              value: "XXX"
+            - name: CALLBACK_URL
+              value: "XXX"
+            - name: GMAIL_AUTHOR
+              value: "XXX"
+            - name: GMAIL_PWD
+              value: "XXX"
+            - name: TWILIO_ACCOUNT_SID
+              value: "XXX"
+            - name: TWILIO_AUTH_TOKEN
+              value: "XXX"
+            - name: TWILIO_PHONE_NUMBER
+              value: "XXX"
+            - name: TWILIO_VERIFIED_CALLER
+              value: "XXX"
+            - name: NODE_ENV
+              value: "XXX"
+          imagePullPolicy: Always

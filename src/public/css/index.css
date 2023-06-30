@@ -1,0 +1,213 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+  box-sizing: border-box;
+}
+
+;
+
+body {
+  background-color: rgb(243, 243, 243);
+  width: 100%;
+  height: 100vh;
+}
+
+;
+
+/*header*/
+.logo img {
+  transition: 0.4s;
+}
+
+.logo img:hover {
+  transition: 0.4s;
+  transform: scale(1.03);
+}
+
+.imgLogo {
+  width: 80px !important;
+  height: 80px !important;
+  margin-left: 20px;
+}
+
+.imgCart {
+  width: 25px !important;
+  height: 25px !important;
+}
+
+.p-footer {
+  font-size: small;
+}
+
+;
+
+.card {
+  width: 50%;
+  height: 50%;
+  padding: 20px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  background-color: rgba(248, 248, 248, 0.582);
+}
+
+;
+
+.card-product {
+  background-color: rgba(243, 188, 168, 0.397);
+}
+
+;
+
+
+/*login & register*/
+.login-body {
+  display: flex;
+  align-items: center;
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
+
+;
+
+.form-control {
+ /* empty */
+}
+
+.form-signin {
+  max-width: 330px;
+  padding: 15px;
+}
+
+;
+
+.form-signin .form-floating:focus-within {
+  z-index: 2;
+}
+
+;
+
+.form-signin input[type="email"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+;
+
+.form-signin input[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+;
+
+.card-box {
+  box-shadow: 1px 1px 4px 4px rgb(241, 240, 240);
+  border-color: 5px solid rgb(0, 0, 0);
+  border-radius: 10px;
+}
+
+;
+
+/* chat */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+span {
+  margin: 0;
+  padding: 0;
+}
+
+
+.app-banner {
+  width: 100%;
+  height: 90vh;
+  display: flex;
+  align-items: center;
+}
+
+.app-banner::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+  opacity: 0.3;
+  z-index: -1;
+  background-size: cover;
+}
+
+.app-banner__text {
+  width: 100%;
+  height: 50%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  gap: 64px;
+  background-color: rgba(7, 91, 139, 0.75);
+  border-radius: 15px;
+}
+
+.app-chat {
+  width: 95%;
+  height: 70%;
+  background-color: rgba(199, 211, 216, 0.24);
+  padding: 16px;
+}
+
+.app-chat__messages {
+  width: 100%;
+  height: 90%;
+  overflow: scroll;
+}
+
+.app-chat__messages-user,
+.app-chat__messages-me {
+  width: 100%;
+  margin-block: 8px;
+  display: flex;
+}
+
+.app-chat__messages-user {
+  justify-content: flex-end;
+}
+
+.app-chat__messages-me {
+  justify-content: flex-start;
+}
+
+.app-chat__messages-user-box,
+.app-chat__messages-me-box {
+  padding: 16px 12px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-chat__messages-user-box {
+  align-items: flex-end;
+  background-color: #40c4ff;
+}
+
+.app-chat__messages-me-box {
+  align-items: flex-start;
+  background-color: #69f0ae;
+}
+
+.app-chat__messages-me-box--name,
+.app-chat__messages-me-box--name {
+  font-size: 12px;
+  font-weight: bolder;
+}
+
+.app-chat__messages-me-box--text,
+.app-chat__messages-me-box--text {
+  font-size: 16px;
+}
